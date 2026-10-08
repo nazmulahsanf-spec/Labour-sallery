@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>গাড়ি হিসাব</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#b8590f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="গাড়ি হিসাব">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--ink:#1c2b26;--mute:#6b7a73;--line:#e3e6df;--acc:#b8590f;--acc2:#e07b27;--accfg:#fff;--on:#1d6b4f;--onfg:#fff;--soft:#fbeede;--exp:#c2402f;--sh:0 2px 10px rgba(40,50,40,.08);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111714;--card:#1b2420;--ink:#e9efec;--mute:#9bada6;--line:#2d3b36;--acc:#f0a35c;--acc2:#f0a35c;--accfg:#141a17;--on:#4cc99a;--onfg:#0f1b18;--soft:#33261a;--exp:#f08a7b;--sh:0 2px 10px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--bg:#111714;--card:#1b2420;--ink:#e9efec;--mute:#9bada6;--line:#2d3b36;--acc:#f0a35c;--acc2:#f0a35c;--accfg:#141a17;--on:#4cc99a;--onfg:#0f1b18;--soft:#33261a;--exp:#f08a7b;--sh:0 2px 10px rgba(0,0,0,.35)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri",system-ui,"Noto Sans Bengali",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:600px;margin:0 auto;padding:12px 12px 50px}
+h1{font-size:22px;margin:0;font-weight:700;color:#fff}
+.hero{background:linear-gradient(135deg,#9c4a0a,#e07b27);border-radius:16px;padding:16px 16px 14px;margin-bottom:12px;box-shadow:var(--sh)}
+.hero p{margin:2px 0 0;font-size:13px;color:rgba(255,255,255,.85)}
+h2{font-size:17px;margin:0 0 10px}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:10px 11px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);min-height:46px;transition:border-color .15s}
+select{appearance:none;-webkit-appearance:none;padding-right:26px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px;border-color:var(--acc)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:4px 0}
+.tabs button{padding:7px 2px 8px;font-size:13.5px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font-weight:600;cursor:pointer;box-shadow:var(--sh)}
+.tabs button i{display:block;font-style:normal;font-size:19px;line-height:1.25}
+.tabs button.on{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
+.bar{display:flex;gap:8px;align-items:end;margin-bottom:12px}
+.bar>div{flex:1;min-width:0}
+label{font-size:13px;color:var(--mute);display:block;margin-bottom:3px;font-weight:500}
+.dsel{display:grid;grid-template-columns:.85fr 1.6fr 1.1fr;gap:6px}
+.dsel select{padding:10px 22px 10px 9px;min-width:0}
+.dsel.m{grid-template-columns:1.6fr 1.1fr}
+.truck{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:var(--sh)}
+.th{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.th b{font-size:17px;flex:1}
+.rate{width:84px;min-height:38px;padding:6px 8px}
+.x{border:0;background:transparent;color:var(--mute);font-size:24px;line-height:1;padding:4px 8px;cursor:pointer;width:auto;min-height:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:15px}
+.chip.on{background:var(--on);border-color:var(--on);color:var(--onfg);font-weight:600}
+.share{margin-top:10px;padding:10px 12px;background:var(--soft);border-radius:10px;font-size:15px}
+.share b{font-size:18px}
+.mini{display:flex;gap:6px;margin-top:8px}
+.mini button,.add{border:1.5px dashed var(--line);background:transparent;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:14px;color:var(--mute)}
+.add{width:100%;border:0;background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accfg);font-weight:700;font-size:17px;padding:13px;margin-bottom:14px;box-shadow:var(--sh)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:12px;box-shadow:var(--sh)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mute);font-weight:500;font-size:13px}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.tot td{font-weight:700;border-bottom:0;font-size:17px}
+.empty{text-align:center;color:var(--mute);padding:26px 8px}
+.wrow{display:flex;gap:8px;margin-bottom:6px}
+.help{font-size:13px;color:var(--mute);margin:6px 2px}
+.addw{display:flex;gap:8px;margin-bottom:12px}
+.addw button{flex:none;padding:0 16px;border:0;border-radius:10px;background:var(--acc);color:var(--accfg);font-weight:700;cursor:pointer}
+.pd{width:26px;min-height:26px;height:26px;accent-color:var(--on)}
+.sub{font-size:13px;color:var(--mute)}
+.row2{display:grid;grid-template-columns:1.3fr 1fr;gap:8px}
+.arow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.arow div{flex:1}
+.neg{color:var(--exp)}
+.th2{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;font-size:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.two .add{margin-bottom:0;font-size:16px}
+.sc{overflow-x:auto}
+.wide{min-width:620px}
+.wide td:first-child,.wide th:first-child{position:sticky;left:0;background:var(--card);padding-right:8px}
+textarea{padding:10px 11px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);margin:4px 0 8px;font-size:13px}
+.panel .two{margin-bottom:8px}
+.eq{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero"><h1>🚚 গাড়ি হিসাব খাতা</h1><p>হাজিরা · অগ্রিম · ম্যাচ বিল · বেতন</p></div>
+  <div class="tabs">
+    <button id="t0" class="on"><i>🚚</i>গাড়ি</button>
+    <button id="t3"><i>📅</i>আজকের মোট</button>
+    <button id="t1"><i>📊</i>মোট হিসাব</button>
+    <button id="t2"><i>👷</i>শ্রমিক</button>
+  </div>
+
+  <section id="p0">
+    <div class="bar">
+      <div><label>তারিখ</label><input type="hidden" id="date" autocomplete="off"></div>
+    </div>
+    <div class="bar">
+      <div><label for="rate">ফুলকপি: গাড়ি প্রতি হাজিরা (৳)</label><input type="number" inputmode="decimal" id="rate" autocomplete="off"></div>
+      <div><label for="srate">সিম: প্রতি কার্টুনের রেট (৳)</label><input type="number" step="any" inputmode="decimal" id="srate" autocomplete="off"></div>
+    </div>
+    <div id="trucks"></div>
+    <div class="two"><button class="add" id="addT">+ ফুলকপির গাড়ি</button><button class="add" id="addS">+ সিমের গাড়ি</button></div>
+  </section>
+
+  <section id="p3" style="display:none">
+    <div class="bar"><div><label>তারিখ</label><input type="hidden" id="date2" autocomplete="off"></div></div>
+    <div class="panel" id="daysum"></div>
+    <div class="panel" id="trucksum" style="display:none"></div>
+    <div class="panel"><h2>অগ্রিম ও ম্যাচ বিল (বেতন থেকে কাটা হবে)</h2>
+      <div style="margin-bottom:8px"><select id="at" aria-label="ধরন"><option value="a">অগ্রিম</option><option value="m">ম্যাচ বিল</option></select></div>
+      <div class="row2"><select id="aw" aria-label="শ্রমিক"></select><input id="aa" type="number" inputmode="decimal" placeholder="টাকা"></div>
+      <div class="addw" style="margin:8px 0 6px"><input id="an" type="text" placeholder="বিবরণ (ঐচ্ছিক)"><button id="addA">যোগ করুন</button></div>
+      <div id="alist"></div>
+    </div>
+  </section>
+
+  <section id="p1" style="display:none">
+    <div class="bar"><div><label>মাস</label><input type="hidden" id="month" autocomplete="off"></div></div>
+    <div class="mini" style="margin:0 0 10px"><button id="q1">১ – ১৫ তারিখ</button><button id="q2">১৬ – শেষ</button><button id="q3">পুরো মাস</button></div>
+    <div class="panel"><div style="margin-bottom:8px"><label>শুরুর তারিখ</label><input type="hidden" id="from" autocomplete="off"></div><div><label>শেষ তারিখ</label><input type="hidden" id="to" autocomplete="off"></div></div>
+    <div class="panel" id="messp">
+      <h2>ম্যাচ বিল (মাস অনুযায়ী)</h2>
+      <div class="row2"><div><label for="mt">মাসের মোট ম্যাচ খরচ (৳)</label><input id="mt" type="number" inputmode="decimal" placeholder="যেমন ৮০০০"></div><div><label for="md">মাসের মোট দিন</label><input id="md" type="number" inputmode="numeric"></div></div>
+      <p class="help" id="mrate"></p>
+      <details><summary style="cursor:pointer;font-weight:600;padding:6px 0">কে কত দিন কম খেয়েছে</summary><div id="moff"></div></details>
+    </div>
+    <div class="panel" id="monsum"></div>
+  </section>
+
+  <section id="p2" style="display:none">
+    <div class="addw"><input id="nw" type="text" placeholder="নতুন শ্রমিকের নাম"><button id="addW">যোগ করুন</button></div>
+    <div id="wlist"></div>
+    <p class="help">নামের ঘরে ট্যাপ করে আসল নাম লিখুন। শ্রমিক মুছলে পুরোনো হিসাব থেকেও তার নাম চলে যাবে।</p>
+    <div class="panel"><h2>ব্যাকআপ ও রিস্টোর</h2>
+      <div class="two"><button class="add" id="bkSave">ব্যাকআপ ফাইল নিন</button><button class="add" id="bkCopy">লেখা কপি করুন</button></div>
+      <p class="help">ফাইল সেভ হলে সেটা Google Drive অ্যাপে আপলোড করে রাখুন। ফাইল না এলে "লেখা কপি করুন" চেপে Drive-এর নোটে বা WhatsApp-এ নিজেকে পেস্ট করে রাখুন।</p>
+      <label for="bkFile">রিস্টোর: ব্যাকআপ ফাইল বেছে নিন</label><input type="file" id="bkFile" accept=".json,application/json,text/plain">
+      <label for="bkText" style="margin-top:8px">অথবা কপি করা ব্যাকআপ এখানে পেস্ট করুন</label>
+      <textarea id="bkText" rows="3"></textarea>
+      <button class="add" id="bkRest" style="margin-bottom:0">পেস্ট করা ব্যাকআপ থেকে রিস্টোর</button>
+      <p class="help" id="bkMsg"></p>
+    </div>
+  </section>
+  <p class="help" id="bk"></p>
+</div>
+
+<script>
+const KEY="gari-hisab-v1";
+let S={workers:[],trucks:{},rate:200};
+try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+const NAMES=["সেন্টু মিয়া","রিপন","জুয়েল","রহিম","বোরহান","ইয়াসিন","ফারুক","শহিদুল","কালু","রবিউল","জাহিদুল","হানিফ","ফারুক ২","জাকির","ইব্রাহিম","রুবেল","মজিবর","আসিক","রফিক","আবু আলম","রাজিব","শহিদুল ২","কুমার"];
+if(!S.workers.length){NAMES.forEach((n,i)=>S.workers.push({id:i+1,name:n}))}
+else if(S.workers.length===23&&S.workers.every(w=>w.name.startsWith("শ্রমিক "))){S.workers.forEach((w,i)=>w.name=NAMES[i])}
+if(!S.adv)S.adv=[];
+if(S.simRate==null)S.simRate=0.6;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const r2=n=>Math.round(n*100)/100;
+const bd=n=>r2(n).toLocaleString("bn-BD",{maximumFractionDigits:2});
+const tk=n=>"৳ "+bd(n);
+const todayS=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const defDate=todayS;
+
+/* তারিখ: দিন → মাস → বছর ক্রমে */
+const BM=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+const bn=n=>String(n).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
+const opts=(a,sel)=>a.map(([v,l])=>`<option value="${v}"${v==sel?" selected":""}>${l}</option>`).join("");
+const yrs=y=>{const c=new Date().getFullYear(),a=[];for(let i=Math.min(c-3,y);i<=Math.max(c+3,y);i++)a.push([i,bn(i)]);return a};
+const dparts=(v,k)=>{
+  const [y,m,d]=(v||todayS()).split("-").map(Number);let h="";
+  if(k!=="m"){const a=[];for(let i=1;i<=31;i++)a.push([i,bn(i)]);h+=`<select data-dp="d" aria-label="তারিখ">${opts(a,d)}</select>`}
+  return h+`<select data-dp="m" aria-label="মাস">${opts(BM.map((n,i)=>[i+1,n]),m)}</select><select data-dp="y" aria-label="বছর">${opts(yrs(y),y)}</select>`;
+};
+const dval=box=>{
+  const g=k=>{const s=box.querySelector(`[data-dp="${k}"]`);return s?+s.value:0};
+  const y=g("y"),m=g("m"),p=n=>String(n).padStart(2,"0");
+  if(!box.querySelector('[data-dp="d"]'))return y+"-"+p(m);
+  const l=new Date(y,m,0).getDate();return y+"-"+p(m)+"-"+p(Math.min(g("d"),l));
+};
+function mkDate(id,kind){
+  const el=$(id),d=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value"),box=document.createElement("div");
+  box.className="dsel"+(kind==="m"?" m":"");el.after(box);
+  const draw=()=>{box.innerHTML=dparts(d.get.call(el),kind)};
+  Object.defineProperty(el,"value",{get(){return d.get.call(el)},set(v){d.set.call(el,v);draw()},configurable:true});
+  box.addEventListener("change",e=>{e.stopPropagation();d.set.call(el,dval(box));draw();el.dispatchEvent(new Event("change",{bubbles:true}))});
+  draw();
+}
+mkDate("date");mkDate("date2");mkDate("month","m");mkDate("from");mkDate("to");
+
+$("date").value=defDate();$("month").value=defDate().slice(0,7);$("rate").value=S.rate;
+const nm=id=>{const w=S.workers.find(x=>x.id===id);return w?w.name:"?"};
+const day=()=>S.trucks[$("date").value]||(S.trucks[$("date").value]=[]);
+
+function tab(i){[0,1,2,3].forEach(k=>{$("p"+k).style.display=k===i?"block":"none";$("t"+k).classList.toggle("on",k===i)});render()}
+[0,1,2,3].forEach(k=>$("t"+k).onclick=()=>tab(k));
+
+const nextDay=s=>{const p=s.split("-").map(Number),d=new Date(p[0],p[1]-1,p[2]+1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmtD=s=>new Date(s+"T00:00:00").toLocaleDateString("bn-BD",{day:"numeric",month:"long"});
+const invOf=t=>t.inv||nextDay($("date").value);
+const info=(t,sim)=>`<div style="margin-bottom:8px"><label>ইনভয়েস তারিখ</label><div class="dsel" data-act="inv">${dparts(invOf(t))}</div></div><div class="eq"><input type="text" value="${esc(t.from||"")}" placeholder="কার কাছ থেকে আসছে" data-act="from" aria-label="কার কাছ থেকে আসছে"><input type="text" value="${esc(t.to||"")}" placeholder="কার কাছে যাবে" data-act="to" aria-label="কার কাছে যাবে"></div><div class="eq">${sim?'<div class="sub" style="align-self:center">কার্টুন: উপরের ঘরে লিখুন</div>':`<input type="number" inputmode="numeric" value="${t.cn||""}" placeholder="কার্টুন" data-act="cn" aria-label="কার্টুন">`}<input type="number" inputmode="decimal" value="${t.bill||""}" placeholder="বিল (৳)" data-act="bill" aria-label="বিল"></div>`;
+
+function renderDay(){
+  const ts=day();
+  $("trucks").innerHTML=ts.length?ts.map((t,i)=>{
+    const n=t.w.length,sim=t.k==="s";
+    const head=sim?`<div class="th"><b>গাড়ি ${bd(i+1)} · সিম</b><button class="x" data-act="delT" aria-label="গাড়ি মুছুন">×</button></div>
+      <div class="th2"><input class="rate" type="number" inputmode="numeric" value="${t.c||""}" placeholder="০" data-act="cart" aria-label="কার্টুন সংখ্যা"><span>কার্টুন × ৳</span><input class="rate" type="number" step="any" inputmode="decimal" value="${t.p}" data-act="prate" aria-label="প্রতি কার্টুনের রেট"><span>= <b>${tk(t.r)}</b></span></div>`
+      :`<div class="th"><b>গাড়ি ${bd(i+1)} · ফুলকপি</b><label style="margin:0">৳</label><input class="rate" type="number" inputmode="decimal" value="${t.r}" data-act="rate" aria-label="হাজিরা"><button class="x" data-act="delT" aria-label="গাড়ি মুছুন">×</button></div>`;
+    return `<div class="truck" data-id="${t.id}">${head}${info(t,sim)}
+      <div class="chips">${S.workers.map(w=>`<button class="chip ${t.w.includes(w.id)?"on":""}" data-act="tog" data-w="${w.id}">${esc(w.name)}</button>`).join("")}</div>
+      <div class="share">${n?`${bd(n)} জন × <b>${tk(t.r/n)}</b> করে (মোট ${tk(t.r)})`:"কে কে কাজ করেছে ট্যাপ করে বেছে নিন"}</div>
+      <div class="mini"><button data-act="all">সবাই</button><button data-act="none">সব বাদ</button>${i>0?'<button data-act="copy">আগের গাড়ির মতো</button>':""}</div>
+    </div>`}).join(""):'<div class="empty">এই দিনে কোনো গাড়ি নেই। নিচের বোতামে গাড়ি যোগ করুন।</div>';
+}
+const lastDay=m=>new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
+function messOf(m){
+  const M=(S.mess||{})[m];if(!M||!(M.t>0))return {};
+  const d=M.d||lastDay(m),off=M.off||{},eat={};let te=0;
+  S.workers.forEach(w=>{const e=Math.max(0,d-(off[w.id]||0));eat[w.id]=e;te+=e});
+  if(!te)return {};
+  const rate=M.t/te,sh={};S.workers.forEach(w=>sh[w.id]=rate*eat[w.id]);
+  return {sh,rate,te};
+}
+function renderMess(){
+  const m=$("month").value;if(!m)return;
+  const M=(S.mess&&S.mess[m])||{},R=messOf(m);
+  $("mt").value=M.t||"";$("md").value=M.d||lastDay(m);
+  $("mrate").textContent=R.rate?`প্রতিজনের প্রতিদিন ৳ ${bd(R.rate)} (মোট ${bd(R.te)} জন-দিন)`:"মোট খরচ লিখলে প্রতি জনের ভাগ নিজে হিসাব হবে।";
+  $("moff").innerHTML=S.workers.map(w=>`<div class="arow"><div>${esc(w.name)}${R.sh?`<span class="sub"> · ৳ ${bd(R.sh[w.id])}</span>`:""}</div><input class="rate" type="number" inputmode="numeric" min="0" data-w="${w.id}" value="${(M.off&&M.off[w.id])||""}" placeholder="০" aria-label="দিন কম"><span class="sub">দিন কম</span></div>`).join("");
+}
+$("messp").addEventListener("change",e=>{
+  const m=$("month").value;if(!m)return;
+  const M=(S.mess||(S.mess={}))[m]||(S.mess[m]={t:0,d:lastDay(m),off:{}});if(!M.off)M.off={};
+  if(e.target.id==="mt")M.t=parseFloat(e.target.value)||0;
+  else if(e.target.id==="md")M.d=parseInt(e.target.value)||lastDay(m);
+  else if(e.target.dataset.w){const v=parseInt(e.target.value)||0;if(v>0)M.off[e.target.dataset.w]=v;else delete M.off[e.target.dataset.w]}
+  save();renderMess();renderMon();
+});
+function setRange(f,t){const m=$("month").value;const last=new Date(Number(m.slice(0,4)),Number(m.slice(5,7)),0).getDate();
+  $("from").value=m+"-"+String(f).padStart(2,"0");$("to").value=m+"-"+String(t==="end"?last:t).padStart(2,"0");renderMon()}
+function renderMon(){
+  const f=$("from").value,t2=$("to").value,fl={},sm={},cnt={},paid={},adv={},ms={};let trucks=0,days=0;
+  Object.keys(S.trucks).filter(d=>d>=f&&d<=t2).sort().forEach(d=>{
+    const ts=S.trucks[d].filter(t=>t.w.length);if(ts.length)days++;
+    const dt={};
+    ts.forEach(t=>{trucks++;const o=t.k==="s"?sm:fl;t.w.forEach(w=>{const v=t.r/t.w.length;o[w]=(o[w]||0)+v;dt[w]=(dt[w]||0)+v;cnt[w]=(cnt[w]||0)+1})});
+    Object.keys(dt).forEach(w=>{if(S.paid&&S.paid[d+"|"+w])paid[w]=(paid[w]||0)+dt[w]});
+  });
+  S.adv.filter(x=>x.d>=f&&x.d<=t2).forEach(x=>{const o=x.t==="m"?ms:adv;o[x.w]=(o[x.w]||0)+x.a});
+  if(t2){const m2=t2.slice(0,7),R=t2>=m2+"-"+String(lastDay(m2)).padStart(2,"0")?messOf(m2):{};if(R.sh)S.workers.forEach(w=>{ms[w.id]=(ms[w.id]||0)+R.sh[w.id]})}
+  const g=(o,id)=>o[id]||0,tot=id=>g(fl,id)+g(sm,id);
+  const ids=S.workers.map(w=>w.id).filter(id=>tot(id)||adv[id]||ms[id]);
+  const net=id=>tot(id)-g(adv,id)-g(ms,id)-g(paid,id);
+  const sumOf=fn=>ids.reduce((a,id)=>a+fn(id),0);
+  const dash=v=>v?tk(v):"–";
+  $("monsum").innerHTML=ids.length?`<div class="sc"><table class="wide"><tr><th>নাম</th><th class="n">ফুলকপি</th><th class="n">সিম</th><th class="n">মোট বেতন</th><th class="n">অগ্রিম</th><th class="n">ম্যাচ বিল</th><th class="n">পাওনা</th></tr>`+
+    ids.map(id=>`<tr><td>${esc(nm(id))}<div class="sub">${bd(cnt[id]||0)}টি গাড়ি</div></td><td class="n">${dash(g(fl,id))}</td><td class="n">${dash(g(sm,id))}</td><td class="n"><b>${tk(tot(id))}</b></td><td class="n">${dash(g(adv,id))}</td><td class="n">${dash(g(ms,id))}</td><td class="n ${net(id)<0?"neg":""}"><b>${tk(net(id))}</b>${paid[id]?`<div class="sub">${tk(paid[id])} আগে দেওয়া</div>`:""}</td></tr>`).join("")+
+    `<tr class="tot"><td>মোট</td><td class="n">${tk(sumOf(id=>g(fl,id)))}</td><td class="n">${tk(sumOf(id=>g(sm,id)))}</td><td class="n">${tk(sumOf(tot))}</td><td class="n">${tk(sumOf(id=>g(adv,id)))}</td><td class="n">${tk(sumOf(id=>g(ms,id)))}</td><td class="n">${tk(sumOf(net))}</td></tr></table></div><p class="help">${bd(days)} দিনে ${bd(trucks)}টি গাড়ি। পাওনা = মোট বেতন − অগ্রিম − ম্যাচ বিল − আগেই "দেওয়া হয়েছে" টিক দেওয়া দিনের টাকা। লাল মানে কাটা টাকা আয়ের চেয়ে বেশি। মাসের ম্যাচ বিল শুধু সেই হিসাবেই কাটা হয় যার শেষ তারিখ মাসের শেষ দিন (যেমন "পুরো মাস" বা "১৬ – শেষ")। পুরো টেবিল দেখতে ডানে স্ক্রল করুন।</p>`:'<div class="empty">এই সময়ে কোনো হিসাব নেই</div>';
+}
+function renderW(){
+  $("wlist").innerHTML=S.workers.map(w=>`<div class="wrow" data-w="${w.id}"><input value="${esc(w.name)}" data-act="ren" aria-label="নাম"><button class="x" data-act="delW" aria-label="মুছুন">×</button></div>`).join("");
+}
+function render(){if($("p0").style.display!=="none")renderDay();else if($("p3").style.display!=="none")renderSum();else if($("p1").style.display!=="none"){renderMess();renderMon()}else renderW()}
+
+function renderAdv(){
+  const dt=$("date").value,sel=$("aw"),cur=sel.value;
+  sel.innerHTML=S.workers.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join("");if(cur)sel.value=cur;
+  const L=S.adv.filter(x=>x.d===dt);
+  $("alist").innerHTML=L.length?L.map(x=>`<div class="arow"><div><b>${esc(nm(x.w))}</b> · ${x.t==="m"?"ম্যাচ বিল":"অগ্রিম"} ${tk(x.a)}${x.n?`<span class="sub"> · ${esc(x.n)}</span>`:""}</div><button class="x" data-id="${x.id}" aria-label="মুছুন">×</button></div>`).join("")+`<p class="help">আজ মোট: ${tk(L.reduce((a,x)=>a+x.a,0))}</p>`:'<p class="help">এই দিনে অগ্রিম বা ম্যাচ বিল নেই।</p>';
+}
+$("addA").onclick=()=>{const a=parseFloat($("aa").value);if(!(a>0)){$("aa").focus();return}
+  S.adv.push({id:Date.now(),w:Number($("aw").value),d:$("date").value,a:a,t:$("at").value,n:$("an").value.trim()});
+  $("aa").value="";$("an").value="";save();renderAdv()};
+$("alist").addEventListener("click",e=>{const b=e.target.closest(".x");if(!b)return;
+  if(!confirm("এই অগ্রিমের হিসাবটি মুছে ফেলবেন?"))return;
+  S.adv=S.adv.filter(x=>x.id!=b.dataset.id);save();renderAdv()});
+function renderTS(){
+  const ts=day(),box=$("trucksum");let c=0,b=0;
+  if(!ts.length){box.style.display="none";return}
+  box.style.display="block";
+  box.innerHTML=`<h2>গাড়ির মাল ও বিল</h2><table><tr><th>গাড়ি</th><th class="n">কার্টুন</th><th class="n">বিল</th></tr>`+ts.map((t,i)=>{const cc=t.k==="s"?(t.c||0):(t.cn||0);c+=cc;b+=t.bill||0;return `<tr><td>${bd(i+1)}. ${esc(t.from||"?")} → ${esc(t.to||"?")}<div class="sub">${t.k==="s"?"সিম":"ফুলকপি"} · ইনভয়েস: ${fmtD(invOf(t))}</div></td><td class="n">${bd(cc)}</td><td class="n">${tk(t.bill||0)}</td></tr>`}).join("")+`<tr class="tot"><td>মোট</td><td class="n">${bd(c)}</td><td class="n">${tk(b)}</td></tr></table>`;
+}
+function renderSum(){
+  const dt=$("date").value;$("date2").value=dt;renderAdv();renderTS();
+  const ts=day(),tot={},list={};
+  ts.forEach((t,i)=>t.w.forEach(w=>{tot[w]=(tot[w]||0)+t.r/t.w.length;(list[w]=list[w]||[]).push(bd(i+1)+(t.k==="s"?" (সিম)":""))}));
+  const ids=S.workers.map(w=>w.id).filter(id=>tot[id]);
+  const P=S.paid||(S.paid={});
+  const sum=ids.reduce((a,id)=>a+tot[id],0);
+  const got=ids.filter(id=>P[dt+"|"+id]).reduce((a,id)=>a+tot[id],0);
+  $("daysum").innerHTML=ids.length?`<h2>কে কত টাকা পাবে</h2><table><tr><th>নাম</th><th class="n">টাকা</th><th class="n">দেওয়া</th></tr>`+
+   ids.map(id=>`<tr><td>${esc(nm(id))}<div class="sub">${bd(list[id].length)}টি গাড়ি: ${list[id].join(", ")}</div></td><td class="n"><b>${tk(tot[id])}</b></td><td class="n"><input type="checkbox" class="pd" data-id="${id}" ${P[dt+"|"+id]?"checked":""} aria-label="দেওয়া হয়েছে"></td></tr>`).join("")+
+   `<tr class="tot"><td>মোট (${bd(ts.length)}টি গাড়ি)</td><td class="n">${tk(sum)}</td><td></td></tr></table><p class="help">ফুলকপি: ${tk(ts.filter(t=>t.w.length&&t.k!=="s").reduce((a,t)=>a+t.r,0))} + সিম: ${tk(ts.filter(t=>t.w.length&&t.k==="s").reduce((a,t)=>a+t.r,0))}</p><p class="help">দেওয়া হয়েছে: ${tk(got)} | বাকি: ${tk(sum-got)}</p>`:'<div class="empty">এই দিনে কোনো হিসাব নেই। "গাড়ি" ট্যাবে গিয়ে হিসাব তুলুন।</div>';
+}
+$("p3").addEventListener("change",e=>{
+  if(e.target.id==="date2"){$("date").value=e.target.value;renderSum();return}
+  if(e.target.classList.contains("pd")){const k=$("date").value+"|"+e.target.dataset.id;(S.paid||(S.paid={}))[k]=e.target.checked;if(!e.target.checked)delete S.paid[k];save();renderSum()}
+});
+$("p0").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const card=b.closest(".truck");if(!card)return;
+  const ts=day(),i=ts.findIndex(t=>t.id==card.dataset.id),t=ts[i],a=b.dataset.act;
+  if(a==="tog"){const w=Number(b.dataset.w);t.w=t.w.includes(w)?t.w.filter(x=>x!==w):[...t.w,w]}
+  else if(a==="all")t.w=S.workers.map(w=>w.id);
+  else if(a==="none")t.w=[];
+  else if(a==="copy")t.w=[...ts[i-1].w];
+  else if(a==="delT"){if(!confirm("এই গাড়িটি মুছে ফেলবেন?"))return;ts.splice(i,1)}
+  else return;
+  save();renderDay();
+});
+$("p0").addEventListener("change",e=>{
+  const ds=e.target.closest(".dsel[data-act=\"inv\"]");
+  if(ds){const t=day().find(t=>t.id==ds.closest(".truck").dataset.id);if(t){t.inv=dval(ds);save();ds.innerHTML=dparts(t.inv)}return}
+  const act=e.target.dataset.act;
+  if(["from","to","cn","bill"].includes(act)){
+    const t=day().find(t=>t.id==e.target.closest(".truck").dataset.id);if(!t)return;
+    if(act==="from"||act==="to")t[act]=e.target.value.trim();
+    else t[act]=parseFloat(e.target.value)||0;
+    save();return;
+  }
+  if(!["rate","cart","prate"].includes(act))return;
+  const t=day().find(t=>t.id==e.target.closest(".truck").dataset.id);
+  let v=parseFloat(e.target.value);if(!(v>=0)){if(act==="cart")v=0;else{renderDay();return}}
+  if(act==="rate")t.r=v;else{if(act==="cart")t.c=v;else t.p=v;t.r=r2((t.c||0)*(t.p||0))}
+  save();renderDay();
+});
+$("addT").onclick=()=>{day().push({id:Date.now(),k:"f",w:[],r:S.rate,inv:nextDay($("date").value)});save();renderDay()};
+$("addS").onclick=()=>{day().push({id:Date.now(),k:"s",w:[],c:0,p:S.simRate,r:0,inv:nextDay($("date").value)});save();renderDay()};
+$("srate").value=S.simRate;$("srate").onchange=()=>{const v=parseFloat($("srate").value);if(v>=0){S.simRate=v;save()}};
+$("rate").onchange=()=>{const v=parseFloat($("rate").value);if(v>=0){S.rate=v;save()}};
+$("date").onchange=render;$("month").onchange=()=>{setRange(1,"end");renderMess()};
+$("from").onchange=renderMon;$("to").onchange=renderMon;
+$("q1").onclick=()=>setRange(1,15);$("q2").onclick=()=>setRange(16,"end");$("q3").onclick=()=>setRange(1,"end");
+
+$("addW").onclick=()=>{const n=$("nw").value.trim();if(!n){$("nw").focus();return}
+  S.workers.push({id:Date.now(),name:n});$("nw").value="";save();renderW()};
+$("wlist").addEventListener("change",e=>{
+  if(e.target.dataset.act!=="ren")return;
+  const w=S.workers.find(x=>x.id==e.target.closest(".wrow").dataset.w);
+  if(w&&e.target.value.trim()){w.name=e.target.value.trim();save()}
+});
+$("wlist").addEventListener("click",e=>{
+  const b=e.target.closest('[data-act="delW"]');if(!b)return;
+  const id=Number(b.closest(".wrow").dataset.w);
+  if(!confirm("এই শ্রমিককে মুছে ফেলবেন? পুরোনো হিসাব থেকেও বাদ যাবে।"))return;
+  S.workers=S.workers.filter(w=>w.id!==id);
+  Object.values(S.trucks).forEach(ts=>ts.forEach(t=>t.w=t.w.filter(x=>x!==id)));
+  save();renderW();
+});
+function updateBk(){
+  $("bk").textContent=(S.lastBackup?"শেষ ব্যাকআপ: "+new Date(S.lastBackup+"T00:00:00").toLocaleDateString("bn-BD",{day:"numeric",month:"long"}):"এখনো ব্যাকআপ নেওয়া হয়নি।")+" তথ্য এই ব্রাউজারে জমা থাকে, তাই নিয়মিত ব্যাকআপ নিন (শ্রমিক ট্যাবে)।";
+}
+function markBk(){S.lastBackup=todayS();save();updateBk()}
+$("bkSave").onclick=async()=>{
+  const msg=$("bkMsg"),name="gari-hisab-backup-"+todayS()+".json",txt=JSON.stringify(S,null,1);
+  try{
+    const dl=(window.claude&&window.claude.use)?await window.claude.use("downloads").catch(()=>null):null;
+    if(dl){await dl.save({filename:name,data:txt})}
+    else{
+      const file=new File([txt],name,{type:"application/json"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"হিসাব ব্যাকআপ"})}
+      else{const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+    }
+    markBk();msg.textContent="ব্যাকআপ ফাইল তৈরি হয়েছে। এখন Google Drive-এ সেভ বা আপলোড করুন।";
+  }catch(e){msg.textContent=(e&&(e.code==="declined"||e.name==="AbortError"))?"সেভ করা হয়নি।":"ফাইল সেভ করা যায়নি। \"লেখা কপি করুন\" ব্যবহার করুন।"}
+};
+$("bkCopy").onclick=async()=>{
+  const t=JSON.stringify(S),msg=$("bkMsg");$("bkText").value=t;
+  try{await navigator.clipboard.writeText(t);markBk();msg.textContent="কপি হয়েছে। এখন Google Drive/Keep-এর নোটে বা WhatsApp-এ নিজেকে পেস্ট করে রাখুন।"}
+  catch(e){$("bkText").select();try{document.execCommand("copy");markBk();msg.textContent="কপি হয়েছে। এখন নোটে বা WhatsApp-এ পেস্ট করে রাখুন।"}catch(_){msg.textContent="নিচের ঘরের লেখা নিজে সিলেক্ট করে কপি করুন।"}}
+};
+function doRestore(txt){
+  let o;try{o=JSON.parse(txt)}catch(e){return "ব্যাকআপটি পড়া যায়নি।"}
+  if(!o||!Array.isArray(o.workers)||typeof o.trucks!=="object")return "এটা সঠিক ব্যাকআপ নয়।";
+  if(!confirm("বর্তমান সব হিসাব মুছে ব্যাকআপের হিসাব বসবে। চালিয়ে যাবেন?"))return "বাতিল করা হয়েছে।";
+  S=o;if(!S.adv)S.adv=[];if(S.simRate==null)S.simRate=0.6;if(S.rate==null)S.rate=200;
+  save();$("rate").value=S.rate;$("srate").value=S.simRate;renderW();updateBk();return "রিস্টোর হয়েছে। এখন গাড়ি বা মোট হিসাব ট্যাবে দেখুন।";
+}
+$("bkFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$("bkMsg").textContent=doRestore(String(r.result));e.target.value=""};r.readAsText(f)};
+$("bkRest").onclick=()=>{const t=$("bkText").value.trim();$("bkMsg").textContent=t?doRestore(t):"আগে ব্যাকআপের লেখা পেস্ট করুন।"};
+let lastToday=todayS();
+function goToday(){
+  lastToday=todayS();$("date").value=defDate();$("month").value=defDate().slice(0,7);setRange(1,"end");render();
+}
+function checkNewDay(){if(todayS()!==lastToday)goToday()}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkNewDay()});
+window.addEventListener("pageshow",checkNewDay);
+window.addEventListener("focus",checkNewDay);
+/* ব্রাউজার পুরোনো তারিখ ফিরিয়ে আনলেও খোলার সময় আজকের তারিখ বসবে */
+window.addEventListener("load",()=>setTimeout(goToday,0));
+updateBk();
+save();setRange(1,"end");render();
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
+</script>
+</body>
+</html>
