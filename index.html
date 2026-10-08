@@ -70,6 +70,7 @@ tr.tot td{font-weight:700;border-bottom:0;font-size:17px}
 .wide td:first-child,.wide th:first-child{position:sticky;left:0;background:var(--card);padding-right:8px}
 textarea{padding:10px 11px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);margin:4px 0 8px;font-size:13px}
 .panel .two{margin-bottom:8px}
+.eq{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -95,6 +96,7 @@ textarea{padding:10px 11px;border:1.5px solid var(--line);border-radius:8px;back
   <section id="p3" style="display:none">
     <div class="bar"><div><label for="date2">তারিখ</label><input type="date" id="date2"></div></div>
     <div class="panel" id="daysum"></div>
+    <div class="panel" id="trucksum" style="display:none"></div>
     <div class="panel"><h2>অগ্রিম ও ম্যাচ বিল (বেতন থেকে কাটা হবে)</h2>
       <div style="margin-bottom:8px"><select id="at" aria-label="ধরন"><option value="a">অগ্রিম</option><option value="m">ম্যাচ বিল</option></select></div>
       <div class="row2"><select id="aw" aria-label="শ্রমিক"></select><input id="aa" type="number" inputmode="decimal" placeholder="টাকা"></div>
@@ -156,6 +158,8 @@ const day=()=>S.trucks[$("date").value]||(S.trucks[$("date").value]=[]);
 function tab(i){[0,1,2,3].forEach(k=>{$("p"+k).style.display=k===i?"block":"none";$("t"+k).classList.toggle("on",k===i)});render()}
 [0,1,2,3].forEach(k=>$("t"+k).onclick=()=>tab(k));
 
+const info=(t,sim)=>`<div class="eq"><input type="text" value="${esc(t.from||"")}" placeholder="কার কাছ থেকে আসছে" data-act="from" aria-label="কার কাছ থেকে আসছে"><input type="text" value="${esc(t.to||"")}" placeholder="কার কাছে যাবে" data-act="to" aria-label="কার কাছে যাবে"></div><div class="eq">${sim?'<div class="sub" style="align-self:center">কার্টুন: উপরের ঘরে লিখুন</div>':`<input type="number" inputmode="numeric" value="${t.cn||""}" placeholder="কার্টুন" data-act="cn" aria-label="কার্টুন">`}<input type="number" inputmode="decimal" value="${t.bill||""}" placeholder="বিল (৳)" data-act="bill" aria-label="বিল"></div>`;
+
 function renderDay(){
   const ts=day();
   $("trucks").innerHTML=ts.length?ts.map((t,i)=>{
@@ -163,7 +167,7 @@ function renderDay(){
     const head=sim?`<div class="th"><b>গাড়ি ${bd(i+1)} · সিম</b><button class="x" data-act="delT" aria-label="গাড়ি মুছুন">×</button></div>
       <div class="th2"><input class="rate" type="number" inputmode="numeric" value="${t.c||""}" placeholder="০" data-act="cart" aria-label="কার্টুন সংখ্যা"><span>কার্টুন × ৳</span><input class="rate" type="number" step="any" inputmode="decimal" value="${t.p}" data-act="prate" aria-label="প্রতি কার্টুনের রেট"><span>= <b>${tk(t.r)}</b></span></div>`
       :`<div class="th"><b>গাড়ি ${bd(i+1)} · ফুলকপি</b><label style="margin:0">৳</label><input class="rate" type="number" inputmode="decimal" value="${t.r}" data-act="rate" aria-label="হাজিরা"><button class="x" data-act="delT" aria-label="গাড়ি মুছুন">×</button></div>`;
-    return `<div class="truck" data-id="${t.id}">${head}
+    return `<div class="truck" data-id="${t.id}">${head}${info(t,sim)}
       <div class="chips">${S.workers.map(w=>`<button class="chip ${t.w.includes(w.id)?"on":""}" data-act="tog" data-w="${w.id}">${esc(w.name)}</button>`).join("")}</div>
       <div class="share">${n?`${bd(n)} জন × <b>${tk(t.r/n)}</b> করে (মোট ${tk(t.r)})`:"কে কে কাজ করেছে ট্যাপ করে বেছে নিন"}</div>
       <div class="mini"><button data-act="all">সবাই</button><button data-act="none">সব বাদ</button>${i>0?'<button data-act="copy">আগের গাড়ির মতো</button>':""}</div>
@@ -231,8 +235,14 @@ $("addA").onclick=()=>{const a=parseFloat($("aa").value);if(!(a>0)){$("aa").focu
 $("alist").addEventListener("click",e=>{const b=e.target.closest(".x");if(!b)return;
   if(!confirm("এই অগ্রিমের হিসাবটি মুছে ফেলবেন?"))return;
   S.adv=S.adv.filter(x=>x.id!=b.dataset.id);save();renderAdv()});
+function renderTS(){
+  const ts=day(),box=$("trucksum");let c=0,b=0;
+  if(!ts.length){box.style.display="none";return}
+  box.style.display="block";
+  box.innerHTML=`<h2>গাড়ির মাল ও বিল</h2><table><tr><th>গাড়ি</th><th class="n">কার্টুন</th><th class="n">বিল</th></tr>`+ts.map((t,i)=>{const cc=t.k==="s"?(t.c||0):(t.cn||0);c+=cc;b+=t.bill||0;return `<tr><td>${bd(i+1)}. ${esc(t.from||"?")} → ${esc(t.to||"?")}<div class="sub">${t.k==="s"?"সিম":"ফুলকপি"}</div></td><td class="n">${bd(cc)}</td><td class="n">${tk(t.bill||0)}</td></tr>`}).join("")+`<tr class="tot"><td>মোট</td><td class="n">${bd(c)}</td><td class="n">${tk(b)}</td></tr></table>`;
+}
 function renderSum(){
-  const dt=$("date").value;$("date2").value=dt;renderAdv();
+  const dt=$("date").value;$("date2").value=dt;renderAdv();renderTS();
   const ts=day(),tot={},list={};
   ts.forEach((t,i)=>t.w.forEach(w=>{tot[w]=(tot[w]||0)+t.r/t.w.length;(list[w]=list[w]||[]).push(bd(i+1)+(t.k==="s"?" (সিম)":""))}));
   const ids=S.workers.map(w=>w.id).filter(id=>tot[id]);
@@ -260,7 +270,14 @@ $("p0").addEventListener("click",e=>{
   save();renderDay();
 });
 $("p0").addEventListener("change",e=>{
-  const act=e.target.dataset.act;if(!["rate","cart","prate"].includes(act))return;
+  const act=e.target.dataset.act;
+  if(["from","to","cn","bill"].includes(act)){
+    const t=day().find(t=>t.id==e.target.closest(".truck").dataset.id);if(!t)return;
+    if(act==="from"||act==="to")t[act]=e.target.value.trim();
+    else t[act]=parseFloat(e.target.value)||0;
+    save();return;
+  }
+  if(!["rate","cart","prate"].includes(act))return;
   const t=day().find(t=>t.id==e.target.closest(".truck").dataset.id);
   let v=parseFloat(e.target.value);if(!(v>=0)){if(act==="cart")v=0;else{renderDay();return}}
   if(act==="rate")t.r=v;else{if(act==="cart")t.c=v;else t.p=v;t.r=r2((t.c||0)*(t.p||0))}
